@@ -212,7 +212,7 @@ describe('Tries', () => {
     it('Should return suggestions', () => {
         const words = ['he', 'hell', 'hello', 'height', 'helen', 'help', 'acceptance', 'accent', 'accordantly', 'account', 'accrete', 'accum'];
         const trie = new TrieNode();
-        trie.add(words/*  */);
+        trie.add(words);
         const sug = trie.getSuggestions('he', 3);
         expect(sug.length).toBe(3);
         sug.forEach( sw => expect(words.filter( w => /he/.test(w) )).toContain(sw));
@@ -223,18 +223,7 @@ describe('Tries', () => {
         const sug3 = trie.getSuggestions('accep');
         sug3.forEach(sw => expect(words.filter(w => /accep/.test(w))).toContain(sw));
 
-        expect(trie.getSuggestions('dog')).toEqual([]);
+        // Will receive 5 words that are close to the requested word.
+        expect(trie.getSuggestions('dog').length).toBe(5);
     });
 });
-
-
-function randomWordGenerator(min=4, max=8) {
-    const letters = ('abcdefghijklmnopqrstuvwxyz').split('');
-
-    const length = Math.floor(Math.random() * (max - min + 1) + min);
-    const word = [];
-
-    for (let i=0; i<length; ++i)
-        word.push(letters[Math.floor(Math.random() * letters.length)]);
-    return word.join('');
-}

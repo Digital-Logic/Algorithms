@@ -15,5 +15,8 @@
     "jest": "^23.6.0",
     "xxhashjs": "^0.2.2"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "jest": {
+    "testEnvironment": "node"
+    }
 }

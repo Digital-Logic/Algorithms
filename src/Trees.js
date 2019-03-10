@@ -273,7 +273,7 @@ function buildSearchTree (value, ...children) {
 
 class TrieNode {
     constructor(word='') {
-        this.char = word.slice(0,1).toLocaleLowerCase();
+        this.char = word.slice(0,1).toLowerCase();
         this.terminus = word.length === 1;
         this.children = new Map();
 
@@ -285,6 +285,7 @@ class TrieNode {
     add(...words) {
         words.forEach( word => {
             if (Array.isArray(word)) {
+                // spread out the array
                 this.add(...word);
             } else {
                 if (word.length === 0) {
@@ -292,36 +293,75 @@ class TrieNode {
                 } else {
                     const char = word.slice(0,1).toLowerCase();
                     if (this.children.has(char)) {
-                        this.children.get(char).add(word.slice(1).toLowerCase());
+                        this.children.get(char).add(word.slice(1));
                     } else {
-                        this.children.set(char, new TrieNode(word.toLowerCase()));
+                        this.children.set(char, new TrieNode(word));
                     }
                 }
             }
         });
     }
 
-    getSuggestions(searchString, numOf = 5, suggestions=[], built='') {
-        if (typeof searchString !== 'string') throw new TypeError('Tries.getSuggestions(), requires a string to search');
+    /**
+     * Get {numOf} word completion suggestions from a {searchString}.
+     * @param {String} searchString
+     * @param {Number} numOf
+     * @returns {Array}
+     */
 
-        if (searchString.length === 0 && suggestions.length < numOf) {
-            // get Suggestions
-            if (this.terminus)
-                suggestions.push(`${built}${this.char}`);
+    getSuggestions(searchString, numOf = 5) {
+        const str = searchString.split('');
+        let curNode = this;
+        let prefix = this.char;
 
-            for(const [key, child] of this.children) {
-                child.getSuggestions('', numOf, suggestions, `${built}${this.char}`);
+        /**
+         *  Follow trie down to the provided searchString.
+         */
+        while(str.length > 0) {
+            const next = str.shift();
+
+            if (curNode.children.has(next)) {
+                curNode = curNode.children.get(next);
+                prefix += curNode.char; // add the found char to the prefix.
+            } else {
+                // word is outside of dictionary,
+                // return whatever suggestions we can find.
+                break;
             }
-        } else {
-            // walk down the trie
-            const next = searchString.slice(0,1);
+        }
 
-            if (this.children.has(next)) {
-                this.children.get(next).getSuggestions(searchString.slice(1), numOf, suggestions, `${built}${this.char}`);
+        /**
+         * Find suggestions from the curNode point within the trie
+         */
+        const suggestions = [];
+        let searchQue = [];
+        let tempQue = _mapChildren(curNode, prefix);
+        let depth = prefix.length; // keep track of search depth.
+
+        while(suggestions.length < numOf && tempQue.length > 0) {
+
+            ++depth;
+
+            searchQue = tempQue;
+            tempQue = [];
+
+            while(searchQue.length > 0 && suggestions.length < numOf) {
+                const { node, prefix } = searchQue.pop();
+
+                // Do we have a completed word.
+                if (node.terminus) {
+                    suggestions.push(prefix + node.char);
+                }
+                // add all children to temp que to be search later with prefix
+                tempQue.push( ..._mapChildren(node, prefix + node.char) );
             }
         }
 
         return suggestions;
+
+        function _mapChildren(node, prefix) {
+            return [...node.children.values()].map( node => ({ node, prefix }));
+        }
     }
 }
 
@@ -330,3 +370,28 @@ export {
     buildSearchTree,
     TrieNode
 };
+
+
+
+    // getSuggestions(searchString, numOf = 5, suggestions=[], built='') {
+    //     if (typeof searchString !== 'string') throw new TypeError('Tries.getSuggestions(), requires a string to search');
+
+    //     if (searchString.length === 0 && suggestions.length < numOf) {
+    //         // get Suggestions
+    //         if (this.terminus)
+    //             suggestions.push(`${built}${this.char}`);
+
+    //         for(const [key, child] of this.children) {
+    //             child.getSuggestions('', numOf, suggestions, `${built}${this.char}`);
+    //         }
+    //     } else {
+    //         // walk down the trie
+    //         const next = searchString.slice(0,1);
+
+    //         if (this.children.has(next)) {
+    //             this.children.get(next).getSuggestions(searchString.slice(1), numOf, suggestions, `${built}${this.char}`);
+    //         }
+    //     }
+
+    //     return suggestions;
+    // }
