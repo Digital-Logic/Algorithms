@@ -1,6 +1,6 @@
 Assortment of algorithms, data structures, and constructor functions (Heap builder, Quick sort builder...) in JavaScript.
 
-## Sort
+### Sort
 - Bubble Sort
 - Select Sort
 - Insert Sort
@@ -9,19 +9,19 @@ Assortment of algorithms, data structures, and constructor functions (Heap build
 - Merge Sort
 - Heap Sort
 
-## Search
+### Search
 - Binary Search --  recursive & iterative
 
-## Trees
+### Trees
 - Binary Search Tree
 - Tries
 
-## Heaps
+### Heaps
 - Min Heap
 - Max Heap
 - Heap Builder
 
-## Data Structures
+### Data Structures
 - Link List
 - Hash Map
 - Bloom Filter

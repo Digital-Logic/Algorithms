@@ -325,7 +325,7 @@ class TrieNode {
                 prefix += curNode.char; // add the found char to the prefix.
             } else {
                 // word is outside of dictionary,
-                // return whatever suggestions we can find.
+                // return whatever suggestions we can find, from this point.
                 break;
             }
         }
@@ -370,28 +370,3 @@ export {
     buildSearchTree,
     TrieNode
 };
-
-
-
-    // getSuggestions(searchString, numOf = 5, suggestions=[], built='') {
-    //     if (typeof searchString !== 'string') throw new TypeError('Tries.getSuggestions(), requires a string to search');
-
-    //     if (searchString.length === 0 && suggestions.length < numOf) {
-    //         // get Suggestions
-    //         if (this.terminus)
-    //             suggestions.push(`${built}${this.char}`);
-
-    //         for(const [key, child] of this.children) {
-    //             child.getSuggestions('', numOf, suggestions, `${built}${this.char}`);
-    //         }
-    //     } else {
-    //         // walk down the trie
-    //         const next = searchString.slice(0,1);
-
-    //         if (this.children.has(next)) {
-    //             this.children.get(next).getSuggestions(searchString.slice(1), numOf, suggestions, `${built}${this.char}`);
-    //         }
-    //     }
-
-    //     return suggestions;
-    // }
